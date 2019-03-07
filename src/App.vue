@@ -1,28 +1,79 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="App">
+    <geoPalMap v-bind:locations="locations"></geoPalMap>
+    <div class="buttons">
+      <a class="menu" id="upload" href="#">Upload GeoJson File</a>
+      <a class="menu" id="lasso" href="#">Lasso</a>
+      <a class="menu" id="change" href="#">Change Icon Color</a>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import geoPalMap from './components/map.vue'
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
-    HelloWorld
+    geoPalMap
+  },
+  data() {
+    return {
+      locations: [{
+        position: {
+          lat: 53.3244431,
+          lng: -6.3857856
+        },
+      },
+      {
+        position: {
+          lat: 53.3244431,
+          lng: -6.4057856
+        },
+      }]
+    }
   }
-}
+};
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+}
+
+#App {
+  width: 100vw;
+  height: 100vh;
+}
+
+a.menu {
+  padding: 10px;;
+  background-color: #2E2E3A;
+  color: #fefefe;
+  text-decoration: none;
+  margin-top: 15px;
+  box-shadow: 0px 0px 0px #888888;
+  opacity: 1;
+  transition: box-shadow .5s, opacity .5s;
+}
+
+a.menu:hover {
+  cursor: pointer;
+  box-shadow: 0px 0px 10px #888888;
+  opacity: 0.7;
+}
+
+.buttons {
+    position: fixed;
+    top: 100px;
+    margin-left: 90%;
+    z-index: 1;
+    display: inline-grid;
+    text-align: center;
 }
 </style>

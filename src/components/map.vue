@@ -7,8 +7,51 @@ import gmapsInit from '../utils/gmaps';
 
 export default {
   name: 'geoPalMap',
+  data() {
+    return {
+      markers: [],
+      google: null,
+      geocoder: null,
+      map: null
+    }
+  },
   props: {
     locations: Array
+  },
+  watch: {
+    locations(results) {
+      const vm = this;
+      if (results.length > 0) {
+        const markerClickHandler = (marker) => {
+          marker.infowindow.open(vm.map, marker);
+        }
+
+        vm.markers = results
+                       .map((location) => {
+                          const marker = new google.maps.Marker({
+                            position: location.position,
+                            map: vm.map,
+                            title: location.title
+                          });
+
+                          const contentString = '<div id="content">'+
+                                                  '<div id="siteNotice">'+
+                                                  '</div>'+
+                                                  '<h1 id="firstHeading" class="firstHeading">'+location.title+'</h1>'+
+                                                  '<div id="bodyContent">'+
+                                                    location.info
+                                                  '</div>'+
+                                                '</div>';
+                                                
+                          marker.infowindow = new google.maps.InfoWindow({
+                            content: contentString
+                          });
+
+                          marker.addListener('click', () => markerClickHandler(marker));
+                          return marker;
+                       });
+      }
+    }
   },
   async mounted() {
     try {
@@ -23,9 +66,10 @@ export default {
 
         map.setCenter(results[0].geometry.location);
         map.fitBounds(results[0].geometry.viewport);
-
-        const markers = this.locations.map(x => new google.maps.Marker({...x, map}));
       });
+      this.google = google;
+      this.geocoder = geocoder;
+      this.map = map;
     } catch (error) {
       console.error(error);
     }

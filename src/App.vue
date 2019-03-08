@@ -2,35 +2,36 @@
   <div id="App">
     <geoPalMap v-bind:locations="locations"></geoPalMap>
     <div class="buttons">
-      <a class="menu" id="upload" href="#">Upload GeoJson File</a>
-      <a class="menu" id="lasso" href="#">Lasso</a>
-      <a class="menu" id="change" href="#">Change Icon Color</a>
+      <FileUpload @onLoad="onLoad($event)"></FileUpload>
+      <div class="wrapper">
+        <button class="btn">Lasso</button>
+      </div>
+      <div class="wrapper">
+        <button class="btn">Change Icon Color</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import geoPalMap from './components/map.vue'
+import geoPalMap from './components/Map.vue'
+import FileUpload from './components/FileUpload.vue'
+// import json from './utils/locations.json'
 
 export default {
   name: 'App',
   components: {
-    geoPalMap
+    geoPalMap,
+    FileUpload
   },
   data() {
     return {
-      locations: [{
-        position: {
-          lat: 53.3244431,
-          lng: -6.3857856
-        },
-      },
-      {
-        position: {
-          lat: 53.3244431,
-          lng: -6.4057856
-        },
-      }]
+      locations: []
+    }
+  },
+  methods: {
+    onLoad($event) {
+      this.locations = $event;
     }
   }
 };
@@ -52,7 +53,7 @@ body {
 }
 
 a.menu {
-  padding: 10px;;
+  padding: 10px;
   background-color: #2E2E3A;
   color: #fefefe;
   text-decoration: none;
@@ -60,6 +61,7 @@ a.menu {
   box-shadow: 0px 0px 0px #888888;
   opacity: 1;
   transition: box-shadow .5s, opacity .5s;
+  border-radius: 5px;
 }
 
 a.menu:hover {
@@ -71,9 +73,20 @@ a.menu:hover {
 .buttons {
     position: fixed;
     top: 100px;
-    margin-left: 90%;
+    margin-left: 88%;
     z-index: 1;
     display: inline-grid;
     text-align: center;
+}
+
+.btn {
+  border: 2px solid gray;
+  color: gray;
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 15px;
 }
 </style>

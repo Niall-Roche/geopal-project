@@ -8,7 +8,6 @@ export default {
   name: 'geoPalMap',
   data() {
     return {
-      // markers: [],
       capturedMarkers: [],
       google: null,
       geocoder: null,
@@ -48,7 +47,10 @@ export default {
           const marker = new vm.$google.maps.Marker({
             position: location.position,
             map: vm.$map,
-            title: location.title
+            title: location.title,
+            icon: {
+              url: vm.$markerColors.red.url
+            }
           });
 
 

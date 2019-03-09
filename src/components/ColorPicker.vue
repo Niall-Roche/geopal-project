@@ -3,8 +3,15 @@
     <transition name="slide">
       <div class="color-picker" v-show="toggled">
           <span>Select a Color: </span>
-          <input type="color" name="favcolor" :value="value" @change="onChange($event)">
-          <button class="btn" @click="$emit('changeColor', value)">Change Color</button>
+          <select ref="select" id="color-select">
+            <option :value="color.url" v-for="color in $markerColors" :key="color.id">
+              {{ color.text | capitalize }}
+            </option>
+          </select>
+          <button class="btn"
+                  @click="$emit('changeColor', $refs.select.value);">
+                  Change Color
+          </button>
       </div>
     </transition>
   </div>
@@ -13,18 +20,8 @@
 <script>
 export default {
   name: 'CapturedDetails',
-  data() {
-    return {
-      value: '#FF0000'
-    };
-  },
   props: {
     toggled: Boolean
-  },
-  methods: {
-    onChange($event) {
-      this.value = $event.target.value;
-    }
   }
 };
 </script>
@@ -32,11 +29,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .color-picker {
-  width: 200px;
-  height: 125px;
+  width: 250px;
+  height: 140px;
   position: fixed;
   top: 300px;
-  margin-left: 88%;
+  right: 30px;
   z-index: 1;
   text-align: center;
   background-color: #2F323A;
@@ -51,11 +48,39 @@ export default {
   margin-top: 15px;
 }
 
+.styled-select {
+   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
+   height: 29px;
+   overflow: hidden;
+   width: 240px;
+}
+
+select#color-select {
+   -webkit-appearance: button;
+   -webkit-border-radius: 2px;
+   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+   -webkit-padding-end: 20px;
+   -webkit-padding-start: 2px;
+   -webkit-user-select: none;
+   background-image: url(http://i62.tinypic.com/15xvbd5.png), -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
+   background-position: 97% center;
+   background-repeat: no-repeat;
+   border: 1px solid #AAA;
+   color: #555;
+   font-size: inherit;
+   margin-top: 5px;
+   overflow: hidden;
+   padding: 5px 10px;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   width: 200px;
+}
+
 .slide-enter-active, .slide-leave-active {
-  transition: margin-left .5s;
+  transition: right .5s;
 }
 
 .slide-enter, .slide-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  margin-left: 100%;
+  right: -280px;
 }
 </style>

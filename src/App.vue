@@ -23,7 +23,7 @@
     </div>
     <CapturedDetails v-bind:capturedMarkers="capturedMarkers"></CapturedDetails>
     <ColorPicker v-bind:toggled="colorPickerToggle"
-                 @changeColor="changeMarkers(newColor)">
+                 @changeColor="changeMarkers($event)">
     </ColorPicker>
   </div>
 </template>
@@ -52,8 +52,9 @@ export default {
   },
   methods: {
 
-    changeMarkers(newColor) {
-      this.capturedMarkers.map(marker => marker.setMap(null));
+    changeMarkers($event) {
+      const url = $event;
+      this.capturedMarkers.map(marker => marker.setIcon({ url }));
     },
 
     onLoad($event) {
@@ -104,7 +105,7 @@ a.menu:hover {
 .buttons {
     position: fixed;
     top: 100px;
-    margin-left: 88%;
+    right: 50px;
     z-index: 1;
     display: inline-grid;
     text-align: center;

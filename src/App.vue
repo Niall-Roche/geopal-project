@@ -16,13 +16,13 @@
       </div>
       <div class="wrapper">
         <button class="btn"
-                @click="colorPickerToggle=capturedMarkers.length>0">
+                @click="colorPickerToggle=!colorPickerToggle">
                 Change Icon Color
         </button>
       </div>
     </div>
     <CapturedDetails v-bind:capturedMarkers="capturedMarkers"></CapturedDetails>
-    <ColorPicker v-bind:toggled="colorPickerToggle"
+    <ColorPicker v-bind:toggled="colorPickerToggle && capturedMarkers.length > 0"
                  @changeColor="changeMarkers($event)">
     </ColorPicker>
   </div>

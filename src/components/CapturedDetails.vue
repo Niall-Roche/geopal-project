@@ -1,21 +1,25 @@
 <template>
-  <div v-show="capturedMarkers.length > 0" class="tbl">
-    <table class="fixed_header">
-      <thead>
-        <tr>
-          <th>Address</th>
-          <th>Lat</th>
-          <th>Lang</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="marker in capturedMarkers" :key="marker.id">
-          <td>{{ marker.title }}</td>
-          <td>{{ marker.position.lat() }}</td>
-          <td>{{ marker.position.lng() }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div>
+    <transition name="slide">
+      <div class="tbl" v-show="capturedMarkers.length > 0">
+        <table class="fixed_header">
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Lat</th>
+              <th>Lang</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="marker in capturedMarkers" :key="marker.id">
+              <td>{{ marker.title }}</td>
+              <td>{{ marker.position.lat() }}</td>
+              <td>{{ marker.position.lng() }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -70,5 +74,13 @@ tbody > tr {
 
 tbody > tr:nth-child(even) {
   background-color: #f2f2f2;
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: bottom .5s;
+}
+
+.slide-enter, .slide-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  bottom: -500px;
 }
 </style>

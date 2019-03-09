@@ -1,10 +1,14 @@
 <template>
   <div id="App">
-    <geoPalMap v-bind:locations="locations"></geoPalMap>
+    <geoPalMap
+      v-bind:locations="locations"
+      v-bind:lasso="lasso"
+      @onLasso="lasso=!lasso">
+    </geoPalMap>
     <div class="buttons">
       <FileUpload @onLoad="onLoad($event)"></FileUpload>
       <div class="wrapper">
-        <button class="btn">Lasso</button>
+        <button class="btn" @click="lasso=!lasso">Lasso</button>
       </div>
       <div class="wrapper">
         <button class="btn">Change Icon Color</button>
@@ -14,9 +18,8 @@
 </template>
 
 <script>
-import geoPalMap from './components/Map.vue'
-import FileUpload from './components/FileUpload.vue'
-// import json from './utils/locations.json'
+import geoPalMap from './components/Map.vue';
+import FileUpload from './components/FileUpload.vue';
 
 export default {
   name: 'App',
@@ -26,8 +29,9 @@ export default {
   },
   data() {
     return {
-      locations: []
-    }
+      locations: [],
+      lasso: false
+    };
   },
   methods: {
     onLoad($event) {
@@ -88,5 +92,18 @@ a.menu:hover {
   font-size: 20px;
   font-weight: bold;
   margin-top: 15px;
+  transition: background-color .5s, color .5s, border-color .5s;
+}
+
+.btn:hover {
+  opacity: 0.7;
+  cursor: pointer;
+  background-color: gray;
+  color: white;
+  border-color: white;
+}
+
+.btn:focus {
+  outline: none;
 }
 </style>

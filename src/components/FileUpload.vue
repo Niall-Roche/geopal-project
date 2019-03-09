@@ -1,34 +1,29 @@
 <template>
     <div class="upload-btn-wrapper">
-      <button class="btn">Upload a file</button>
-      <input type="file" name="myfile" @change="onFileChange"/>
+      <button @click="$refs.file.click()" class="btn">Upload a file</button>
+      <input type="file" ref="file" name="myfile" @change="onFileChange"/>
     </div>
 </template>
 
 <script>
-  export default {
-    name: 'FileUpload',
-    data: {
-      image: ''
+export default {
+  name: 'FileUpload',
+  methods: {
+    onFileChange(e) {
+      const files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.createData(files[0]);
     },
-    methods: {
-      onFileChange(e) {
-        var files = e.target.files || e.dataTransfer.files;
-        if (!files.length)
-          return;
-        this.createData(files[0]);
-      },
-      createData(file) {
-        var reader = new FileReader();
+    createData(file) {
+      const reader = new FileReader();
 
-        reader.onload = (e) => {
-          const result = JSON.parse(e.target.result);
-          this.$emit('onLoad', result);
-        };
-        reader.readAsText(file);
-      }
+      reader.onload = (e) => {
+        this.$emit('onLoad', JSON.parse(e.target.result));
+      };
+      reader.readAsText(file);
     }
   }
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -40,11 +35,10 @@
 }
 
 .upload-btn-wrapper input[type=file] {
-  font-size: 100px;
   position: absolute;
   left: 0;
   top: 0;
-  opacity: 0;
+  display: none;
 }
 
 input {

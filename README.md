@@ -35,3 +35,4 @@ https://vuejs.org/v2/guide/
 https://blog.benestudio.co/custom-file-upload-button-with-pure-css-5aacf39aa0a
 https://codepen.io/Atinux/pen/qOvawK
 https://medium.com/fullstackio/managing-state-in-vue-js-23a0352b1c87
+https://developers.google.com/maps/documentation/javascript/drawinglayer

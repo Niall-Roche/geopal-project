@@ -40,3 +40,4 @@ https://medium.com/@letian1997/how-to-change-javascript-google-map-marker-color-
 https://developers.google.com/maps/documentation/javascript/drawinglayer
 https://medium.com/@vembarrajan/html-css-tricks-scroll-able-table-body-tbody-d23182ae0fbc
 https://codepen.io/ericrasch/pen/zjDBx
+https://medium.com/netscape/deploying-a-vue-js-2-x-app-to-heroku-in-5-steps-tutorial-a69845ace489

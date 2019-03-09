@@ -7,6 +7,7 @@ import gmapsInit from './utils/gmaps';
  */
 gmapsInit().then((result) => {
   Vue.prototype.$google = result;
+  Vue.prototype.$map = null;
   Vue.prototype.$markers = [];
   Vue.config.productionTip = false;
 

@@ -33,7 +33,7 @@ export default {
         vm.capturedMarkers = [];
       }
       // Loading the drawing Tool in the Map.
-      vm.drawingManager.setMap(vm.map);
+      vm.drawingManager.setMap(vm.$map);
     },
     /*
     * Method that will create an array of map markers from the results of a given input file
@@ -41,13 +41,13 @@ export default {
     createMarkersFromInput(input) {
       const vm = this;
       const markerClickHandler = (marker) => {
-        marker.infowindow.open(vm.map, marker);
+        marker.infowindow.open(vm.$map, marker);
       };
       vm.$markers = input
         .map((location) => {
           const marker = new vm.$google.maps.Marker({
             position: location.position,
-            map: vm.map,
+            map: vm.$map,
             title: location.title
           });
 
@@ -115,7 +115,7 @@ export default {
     try {
       const vm = this;
       vm.geocoder = new vm.$google.maps.Geocoder();
-      vm.map = new vm.$google.maps.Map(this.$el);
+      vm.$map = new vm.$google.maps.Map(this.$el);
       vm.drawingManager = new vm.$google.maps.drawing.DrawingManager();
 
       vm.geocoder.geocode({ address: 'Dublin' }, (results, status) => {
@@ -123,8 +123,8 @@ export default {
           throw new Error(status);
         }
 
-        vm.map.setCenter(results[0].geometry.location);
-        vm.map.fitBounds(results[0].geometry.viewport);
+        vm.$map.setCenter(results[0].geometry.location);
+        vm.$map.fitBounds(results[0].geometry.viewport);
       });
 
       // Setting options for the Drawing Tool. In our case, enabling Polygon shape.

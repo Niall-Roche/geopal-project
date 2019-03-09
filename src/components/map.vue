@@ -3,25 +3,19 @@
 </template>
 
 <script>
-import gmapsInit from '../utils/gmaps';
 
 export default {
   name: 'geoPalMap',
   data() {
     return {
-      markers: [],
+      // markers: [],
+      capturedMarkers: [],
       google: null,
       geocoder: null,
       map: null,
       drawingManager: null,
       rectangle: null,
-      clicked: false,
-      rectCoordinates: {
-        north: null,
-        west: null,
-        south: null,
-        east: null
-      }
+      clicked: false
     };
   },
   props: {
@@ -36,6 +30,7 @@ export default {
       if (vm.rectangle) {
         vm.rectangle.setMap(null);
         vm.rectangle = null;
+        vm.capturedMarkers = [];
       }
       // Loading the drawing Tool in the Map.
       vm.drawingManager.setMap(vm.map);
@@ -48,9 +43,9 @@ export default {
       const markerClickHandler = (marker) => {
         marker.infowindow.open(vm.map, marker);
       };
-      vm.markers = input
+      vm.$markers = input
         .map((location) => {
-          const marker = new vm.google.maps.Marker({
+          const marker = new vm.$google.maps.Marker({
             position: location.position,
             map: vm.map,
             title: location.title
@@ -66,7 +61,7 @@ export default {
                                   </div>
                                  </div>`;
 
-          marker.infowindow = new vm.google.maps.InfoWindow({
+          marker.infowindow = new vm.$google.maps.InfoWindow({
             content: contentString
           });
 
@@ -78,31 +73,24 @@ export default {
     * Method that will clear any current map markers from the markers array
     */
     clearDownMarkers() {
-      this.markers.map(marker => marker.setMap(null));
-      this.markers = [];
+      this.$markers.map(marker => marker.setMap(null));
+      this.$markers = [];
     },
 
-    clearDownRectangle() {
-      if (this.rectangle) {
-        this.rectangle.setMap(null);
-        this.rectangle = [];
+    checkMarkers() {
+      const vm = this;
+      if (vm.$markers.length > 0 && vm.rectangle) {
+        vm.capturedMarkers = vm.$markers
+          .filter(marker => vm.rectangle.getBounds().contains(marker.getPosition()));
       }
-    },
-
-    drawRect(coordinates) {
-      this.rectangle = new this.google.maps.Rectangle({
-        strokeColor: '#FF0000',
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: '#FF0000',
-        fillOpacity: 0.35,
-        map: this.map,
-        bounds: { ...coordinates }
-      });
     }
 
   },
   watch: {
+
+    capturedMarkers(markers) {
+      this.$emit('captured', markers);
+    },
 
     lasso(lasso) {
       if (lasso) {
@@ -121,30 +109,31 @@ export default {
         vm.createMarkersFromInput(results);
       }
     }
-  },
-  async mounted() {
-    try {
-      const google = await gmapsInit();
-      const geocoder = new google.maps.Geocoder();
-      const map = new google.maps.Map(this.$el);
-      const drawingManager = new google.maps.drawing.DrawingManager();
 
-      geocoder.geocode({ address: 'Dublin' }, (results, status) => {
+  },
+  mounted() {
+    try {
+      const vm = this;
+      vm.geocoder = new vm.$google.maps.Geocoder();
+      vm.map = new vm.$google.maps.Map(this.$el);
+      vm.drawingManager = new vm.$google.maps.drawing.DrawingManager();
+
+      vm.geocoder.geocode({ address: 'Dublin' }, (results, status) => {
         if (status !== 'OK' || !results[0]) {
           throw new Error(status);
         }
 
-        map.setCenter(results[0].geometry.location);
-        map.fitBounds(results[0].geometry.viewport);
+        vm.map.setCenter(results[0].geometry.location);
+        vm.map.fitBounds(results[0].geometry.viewport);
       });
 
       // Setting options for the Drawing Tool. In our case, enabling Polygon shape.
-      drawingManager.setOptions({
-        drawingMode: google.maps.drawing.OverlayType.RECTANGLE,
+      vm.drawingManager.setOptions({
+        drawingMode: vm.$google.maps.drawing.OverlayType.RECTANGLE,
         drawingControl: true,
         drawingControlOptions: {
-          position: google.maps.ControlPosition.TOP_CENTER,
-          drawingModes: [google.maps.drawing.OverlayType.RECTANGLE]
+          position: vm.$google.maps.ControlPosition.TOP_CENTER,
+          drawingModes: [vm.$google.maps.drawing.OverlayType.RECTANGLE]
         },
         rectangleOptions: {
           strokeColor: '#6c6c6c',
@@ -154,19 +143,15 @@ export default {
         }
       });
 
-      drawingManager.setOptions({
+      vm.drawingManager.setOptions({
         drawingControl: false
       });
 
-      google.maps.event.addListener(drawingManager, 'rectanglecomplete', (rectangle) => {
+      vm.$google.maps.event.addListener(vm.drawingManager, 'rectanglecomplete', (rectangle) => {
         this.rectangle = rectangle;
         this.$emit('onLasso');
+        this.checkMarkers();
       });
-
-      this.google = google;
-      this.geocoder = geocoder;
-      this.map = map;
-      this.drawingManager = drawingManager;
     } catch (error) {
       console.error(error);
     }

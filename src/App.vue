@@ -3,39 +3,65 @@
     <geoPalMap
       v-bind:locations="locations"
       v-bind:lasso="lasso"
-      @onLasso="lasso=!lasso">
+      @onLasso="lasso=!lasso"
+      @captured="onCaptured($event)">
     </geoPalMap>
     <div class="buttons">
       <FileUpload @onLoad="onLoad($event)"></FileUpload>
       <div class="wrapper">
-        <button class="btn" @click="lasso=!lasso">Lasso</button>
+        <button class="btn"
+                @click="lasso=!lasso">
+                Lasso
+        </button>
       </div>
       <div class="wrapper">
-        <button class="btn">Change Icon Color</button>
+        <button class="btn"
+                @click="colorPickerToggle=capturedMarkers.length>0">
+                Change Icon Color
+        </button>
       </div>
     </div>
+    <CapturedDetails v-bind:capturedMarkers="capturedMarkers"></CapturedDetails>
+    <ColorPicker v-bind:toggled="colorPickerToggle"
+                 @changeColor="changeMarkers(newColor)">
+    </ColorPicker>
   </div>
 </template>
 
 <script>
 import geoPalMap from './components/Map.vue';
 import FileUpload from './components/FileUpload.vue';
+import CapturedDetails from './components/CapturedDetails.vue';
+import ColorPicker from './components/ColorPicker.vue';
 
 export default {
   name: 'App',
   components: {
     geoPalMap,
-    FileUpload
+    FileUpload,
+    CapturedDetails,
+    ColorPicker
   },
   data() {
     return {
       locations: [],
-      lasso: false
+      lasso: false,
+      colorPickerToggle: false,
+      capturedMarkers: []
     };
   },
   methods: {
+
+    changeMarkers(newColor) {
+      this.capturedMarkers.map(marker => marker.setMap(null));
+    },
+
     onLoad($event) {
       this.locations = $event;
+    },
+
+    onCaptured($event) {
+      this.capturedMarkers = $event;
     }
   }
 };
@@ -49,6 +75,7 @@ body {
   line-height: 1.5;
   font-size: 18px;
   font-family: 'Roboto', sans-serif;
+  font-weight: 300;
 }
 
 #App {
@@ -96,7 +123,6 @@ a.menu:hover {
 }
 
 .btn:hover {
-  opacity: 0.7;
   cursor: pointer;
   background-color: gray;
   color: white;

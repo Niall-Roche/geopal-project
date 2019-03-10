@@ -9,12 +9,10 @@ export default {
   data() {
     return {
       capturedMarkers: [],
-      google: null,
       geocoder: null,
-      map: null,
       drawingManager: null,
-      rectangle: null,
-      clicked: false
+      places: null,
+      rectangle: null
     };
   },
   props: {
@@ -34,42 +32,72 @@ export default {
       // Loading the drawing Tool in the Map.
       vm.drawingManager.setMap(vm.$map);
     },
+
     /*
-    * Method that will create an array of map markers from the results of a given input file
+    * Geocode result handler. Immediatly calls places API.
     */
-    createMarkersFromInput(input) {
+    handleGeocodeResults(results, status) {
+      const vm = this;
+
+      if (status !== 'OK' || !results[0]) {
+        throw new Error(status);
+      }
+
+      vm.places.getDetails({
+        placeId: results[0].place_id
+      }, (place, sts) => { vm.handlePlacesResults(place, sts); });
+    },
+
+    /*
+    * Create a marker using place info.
+    */
+    handlePlacesResults(place, status) {
       const vm = this;
       const markerClickHandler = (marker) => {
         marker.infowindow.open(vm.$map, marker);
       };
-      vm.$markers = input
-        .map((location) => {
-          const marker = new vm.$google.maps.Marker({
-            position: location.position,
-            map: vm.$map,
-            title: location.title,
-            icon: {
-              url: vm.$markerColors.red.url
-            }
-          });
-
-
-          const contentString = `<div id="content">
-                                  <div id="siteNotice">
-                                  </div>
-                                  <h1 id="firstHeading" class="firstHeading">${location.title}</h1>
-                                  <div id="bodyContent">
-                                    ${location.info}
-                                  </div>
-                                 </div>`;
-
-          marker.infowindow = new vm.$google.maps.InfoWindow({
-            content: contentString
-          });
-
-          marker.addListener('click', () => markerClickHandler(marker));
-          return marker;
+      if (status === vm.$google.maps.places.PlacesServiceStatus.OK) {
+        const marker = new vm.$google.maps.Marker({
+          position: place.geometry.location,
+          map: vm.$map,
+          title: place.formatted_address,
+          icon: {
+            url: vm.$markerColors.red.url
+          }
         });
+
+        marker.infowindow = new vm.$google.maps.InfoWindow({
+          content: place.adr_address
+        });
+
+        marker.addListener('click', () => markerClickHandler(marker));
+        vm.$markers.push(marker);
+      }
+    },
+
+    /*
+    * Handle File input
+    * Method checks for location points, address or place Id
+    */
+    createMarkersFromInput(input) {
+      const vm = this;
+      input.forEach((location) => {
+        if (location.position.lat && location.position.lng) {
+          vm.geocoder.geocode({
+            location: location.position
+          }, (results, status) => vm.handleGeocodeResults(results, status));
+        } else if (location.address) {
+          vm.geocoder.geocode({
+            address: location.address
+          }, (results, status) => vm.handleGeocodeResults(results, status));
+        } else if (location.placeId) {
+          vm.places.getDetails({
+            placeId: location.placeId
+          }, (place, sts) => vm.handlePlacesResults(place, sts));
+        } else {
+          alert('Invalid Inout File');
+        }
+      });
     },
     /*
     * Method that will clear any current map markers from the markers array
@@ -116,9 +144,14 @@ export default {
   mounted() {
     try {
       const vm = this;
+      /* Register the geocode service */
       vm.geocoder = new vm.$google.maps.Geocoder();
+      /* Register the map */
       vm.$map = new vm.$google.maps.Map(this.$el);
+      /* Register the drawing service */
       vm.drawingManager = new vm.$google.maps.drawing.DrawingManager();
+      /* Register the places service */
+      vm.places = new vm.$google.maps.places.PlacesService(vm.$map);
 
       vm.geocoder.geocode({ address: 'Dublin' }, (results, status) => {
         if (status !== 'OK' || !results[0]) {
@@ -129,7 +162,7 @@ export default {
         vm.$map.fitBounds(results[0].geometry.viewport);
       });
 
-      // Setting options for the Drawing Tool. In our case, enabling Polygon shape.
+      // Setting options for the Drawing Tool. In our case, enabling Rectangle shape.
       vm.drawingManager.setOptions({
         drawingMode: vm.$google.maps.drawing.OverlayType.RECTANGLE,
         drawingControl: true,

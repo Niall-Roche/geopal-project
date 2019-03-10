@@ -80,7 +80,7 @@ select#color-select {
   transition: right .5s;
 }
 
-.slide-enter, .slide-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.slide-enter, .slide-leave-to {
   right: -280px;
 }
 </style>

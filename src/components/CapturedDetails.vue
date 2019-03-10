@@ -80,7 +80,7 @@ tbody > tr:nth-child(even) {
   transition: bottom .5s;
 }
 
-.slide-enter, .slide-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.slide-enter, .slide-leave-to {
   bottom: -500px;
 }
 </style>

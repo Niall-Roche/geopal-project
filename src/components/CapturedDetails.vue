@@ -6,15 +6,15 @@
           <thead>
             <tr>
               <th>Address</th>
-              <th>Lat</th>
-              <th>Lang</th>
+              <th class="position">Lat</th>
+              <th class="position">Lang</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="marker in capturedMarkers" :key="marker.id">
               <td>{{ marker.title }}</td>
-              <td>{{ marker.position.lat() }}</td>
-              <td>{{ marker.position.lng() }}</td>
+              <td class="position">{{ marker.position.lat().toString().substr(0,12) }}</td>
+              <td class="position">{{ marker.position.lng().toString().substr(0,12) }}</td>
             </tr>
           </tbody>
         </table>
@@ -70,6 +70,10 @@ export default {
 
 .fixed_header td {
   font-size: 12px;
+}
+
+.fixed_header th.position, .fixed_header td.position {
+  width: 100px;
 }
 
 tbody > tr {

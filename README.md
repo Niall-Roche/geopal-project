@@ -6,6 +6,8 @@ The app allows the user to upload a JSON file that contains a position, address 
 The user can then lasso markers. This will display the captured markers details in a grid.
 The user can then change the colour of the captured markers.
 
+https://geopal-project.herokuapp.com/
+
 
 ## Project setup
 ```

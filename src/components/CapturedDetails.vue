@@ -1,13 +1,21 @@
 <template>
   <div>
+    <button class="btn grid-pos"
+            v-show="!showGrid && capturedMarkers.length > 0"
+            @click="showGrid=!showGrid">
+      Show Grid
+    </button>
     <transition name="slide">
-      <div class="tbl" v-show="capturedMarkers.length > 0">
+      <div class="grid-pos" v-show="showGrid && capturedMarkers.length > 0">
         <table class="fixed_header">
           <thead>
             <tr>
               <th>Address</th>
               <th class="position">Lat</th>
-              <th class="position">Lang</th>
+              <th class="position">
+                Lang
+                <button @click="showGrid=!showGrid" class="close">&times;</button>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -26,15 +34,29 @@
 <script>
 export default {
   name: 'CapturedDetails',
+  data() {
+    return {
+      showGrid: true
+    };
+  },
   props: {
     capturedMarkers: Array
+  },
+  watch: {
+    capturedMarkers(val) {
+      if (val.length === 0) {
+        this.showGrid = false;
+      } else {
+        this.showGrid = true;
+      }
+    }
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.tbl {
+.grid-pos {
   position: absolute;
   bottom: 50px;
   z-index: 10;

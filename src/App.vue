@@ -21,8 +21,10 @@
         </button>
       </div>
     </div>
-    <CapturedDetails v-bind:capturedMarkers="capturedMarkers"></CapturedDetails>
+    <CapturedDetails v-bind:capturedMarkers="capturedMarkers">
+    </CapturedDetails>
     <ColorPicker v-bind:toggled="colorPickerToggle && capturedMarkers.length > 0"
+                 @close="colorPickerToggle=!colorPickerToggle"
                  @changeColor="changeMarkers($event)">
     </ColorPicker>
   </div>
@@ -131,6 +133,25 @@ a.menu:hover {
 }
 
 .btn:focus {
+  outline: none;
+}
+
+.close {
+  float: right;
+  margin-top: 2px;
+  font-size: 20px;
+  margin-right: 5px;
+  background-color: rgba(0,0,0,0);
+  padding: 0;
+  color: #fafafa;
+  border: none;
+}
+
+.close:hover {
+  cursor: pointer;
+}
+
+.close:focus {
   outline: none;
 }
 </style>

@@ -3,13 +3,14 @@
     <transition name="slide">
       <div class="color-picker" v-show="toggled">
           <span>Select a Color: </span>
+          <button @click="$emit('close')" class="close">&times;</button>
           <select ref="select" id="color-select">
             <option :value="color.url" v-for="color in $markerColors" :key="color.id">
               {{ color.text | capitalize }}
             </option>
           </select>
           <button class="btn"
-                  @click="$emit('changeColor', $refs.select.value);">
+                  @click="$emit('changeColor', $refs.select.value)">
                   Change Color
           </button>
       </div>

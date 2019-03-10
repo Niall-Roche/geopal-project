@@ -12,7 +12,8 @@ export default {
       geocoder: null,
       drawingManager: null,
       places: null,
-      rectangle: null
+      rectangle: null,
+      allowMove: false
     };
   },
   props: {
@@ -41,6 +42,13 @@ export default {
 
       if (status !== 'OK' || !results[0]) {
         throw new Error(status);
+      }
+
+      if (vm.allowMove) {
+        vm.allowMove = false;
+        vm.$map.setCenter(results[0].geometry.location);
+        vm.$map.fitBounds(results[0].geometry.viewport);
+        vm.$map.setZoom(12);
       }
 
       vm.places.getDetails({
@@ -81,8 +89,9 @@ export default {
     */
     createMarkersFromInput(input) {
       const vm = this;
+      vm.allowMove = true;
       input.forEach((location) => {
-        if (location.position.lat && location.position.lng) {
+        if (location.position && location.position.lat && location.position.lng) {
           vm.geocoder.geocode({
             location: location.position
           }, (results, status) => vm.handleGeocodeResults(results, status));

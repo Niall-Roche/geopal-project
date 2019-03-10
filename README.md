@@ -1,5 +1,12 @@
 # geopal-project
 
+### Description
+A simple app that implements the google Maps api.
+The app allows the user to upload a JSON file that contains a position, address or place id.
+The user can then lasso markers. This will display the captured markers details in a grid.
+The user can then change the colour of the captured markers.
+
+
 ## Project setup
 ```
 npm install
@@ -27,6 +34,9 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### CURRENT LIMITATIONS
+
 
 ### Resources
 https://markus.oberlehner.net/blog/using-the-google-maps-api-with-vue/

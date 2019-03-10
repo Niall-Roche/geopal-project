@@ -46,8 +46,4 @@ input {
   height: 100%;
 }
 
-input:hover {
-  cursor: pointer;
-}
-
 </style>

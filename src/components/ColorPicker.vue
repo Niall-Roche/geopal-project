@@ -44,17 +44,6 @@ export default {
   color: #fefefe;
 }
 
-.color-picker input{
-  margin-top: 15px;
-}
-
-.styled-select {
-   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
-   height: 29px;
-   overflow: hidden;
-   width: 240px;
-}
-
 select#color-select {
    -webkit-appearance: button;
    -webkit-border-radius: 2px;

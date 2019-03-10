@@ -50,7 +50,7 @@ export default {
   display:block;
   width: 100%;
   overflow: auto;
-  height: 300px;
+  max-height: 200px;
 }
 
 .fixed_header thead tr {
@@ -66,6 +66,10 @@ export default {
   padding: 5px;
   text-align: left;
   width: 200px;
+}
+
+.fixed_header td {
+  font-size: 12px;
 }
 
 tbody > tr {

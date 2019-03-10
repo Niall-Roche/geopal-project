@@ -24,12 +24,8 @@ export default {
 
     triggerLasso() {
       const vm = this;
-
-      if (vm.rectangle) {
-        vm.rectangle.setMap(null);
-        vm.rectangle = null;
-        vm.capturedMarkers = [];
-      }
+      // Clear the lasso if one exists
+      vm.clearLasso();
       // Loading the drawing Tool in the Map.
       vm.drawingManager.setMap(vm.$map);
     },
@@ -115,6 +111,17 @@ export default {
       this.$markers.map(marker => marker.setMap(null));
       this.$markers = [];
     },
+    /*
+    * Clear currently drawn lasso. Will also clear any captured markers.
+    */
+    clearLasso() {
+      const vm = this;
+      if (vm.rectangle) {
+        vm.rectangle.setMap(null);
+        vm.rectangle = null;
+        vm.capturedMarkers = [];
+      }
+    },
 
     checkMarkers() {
       const vm = this;
@@ -144,6 +151,8 @@ export default {
       if (results.length > 0) {
         /* Clear any markers that may exist */
         vm.clearDownMarkers();
+        /* Clear lasso if it exists */
+        vm.clearLasso();
         /* Create array of markers from file input */
         vm.createMarkersFromInput(results);
       }

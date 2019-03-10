@@ -40,13 +40,6 @@ export default {
         throw new Error(status);
       }
 
-      if (vm.allowMove) {
-        vm.allowMove = false;
-        vm.$map.setCenter(results[0].geometry.location);
-        vm.$map.fitBounds(results[0].geometry.viewport);
-        vm.$map.setZoom(12);
-      }
-
       vm.places.getDetails({
         placeId: results[0].place_id
       }, (place, sts) => { vm.handlePlacesResults(place, sts); });
@@ -76,6 +69,13 @@ export default {
 
         marker.addListener('click', () => markerClickHandler(marker));
         vm.$markers.push(marker);
+
+        if (vm.allowMove) {
+          vm.allowMove = false;
+          vm.$map.setCenter(place.geometry.location);
+          vm.$map.fitBounds(place.geometry.viewport);
+          vm.$map.setZoom(9);
+        }
       }
     },
 

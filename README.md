@@ -35,7 +35,9 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### CURRENT LIMITATIONS
-Any more than 10 supplied locations will trigger OVER_QUERY_LIMIT error
+Any more than 10 supplied locations will trigger OVER_QUERY_LIMIT error. 
+A work around for this was added but it's not 100%.
+See src/Components/Map.vue -> methods.handleGeocodeResults
 
 ### Resources
 https://markus.oberlehner.net/blog/using-the-google-maps-api-with-vue/

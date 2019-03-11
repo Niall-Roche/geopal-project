@@ -13,7 +13,8 @@ export default {
       drawingManager: null,
       places: null,
       rectangle: null,
-      allowMove: false
+      allowMove: false,
+      currentLocation: null
     };
   },
   props: {
@@ -21,7 +22,21 @@ export default {
     lasso: Boolean
   },
   methods: {
+    /*
+    * Handle File input
+    */
+    handleInput(input) {
+      const vm = this;
+      vm.allowMove = true;
+      input.forEach((location) => {
+        vm.currentLocation = location;
+        vm.geoCoder();
+      });
+    },
 
+    /*
+    * Trigger the lasso
+    */
     triggerLasso() {
       const vm = this;
       // Clear the lasso if one exists
@@ -31,18 +46,53 @@ export default {
     },
 
     /*
-    * Geocode result handler. Immediatly calls places API.
+    * Checks vm.currentLocation
+    * position -> geocoder.geocode
+    * address -> geocoder.geocode
+    * placeId -> places.getDetails
+    */
+    geoCoder() {
+      const vm = this;
+      if (vm.currentLocation.position) {
+        vm.geocoder.geocode({
+          location: vm.currentLocation.position
+        }, (results, status) => vm.handleGeocodeResults(results, status));
+      } else if (vm.currentLocation.address) {
+        vm.geocoder.geocode({
+          address: vm.currentLocation.address
+        }, (results, status) => vm.handleGeocodeResults(results, status));
+      } else if (vm.currentLocation.placeId) {
+        vm.places.getDetails({
+          placeId: vm.currentLocation.placeId
+        }, (place, sts) => vm.handlePlacesResults(place, sts));
+      } else {
+        alert('Invalid Input File');
+      }
+    },
+
+    /*
+    * Geocode result handler.
+    * Checks for Over query limit and runs a set timeout if found.
+    * This will rerun the geoCode method again.
+    * Will return results when over 10 in input file but not 100%.
+    * Not the most elegant solution.
     */
     handleGeocodeResults(results, status) {
       const vm = this;
 
       if (status !== 'OK' || !results[0]) {
-        throw new Error(status);
+        if (status === 'OVER_QUERY_LIMIT') {
+          setTimeout(() => {
+            vm.geoCoder();
+          }, 1000);
+        } else {
+          throw new Error(status);
+        }
+      } else {
+        vm.places.getDetails({
+          placeId: results[0].place_id
+        }, (place, sts) => { vm.handlePlacesResults(place, sts); });
       }
-
-      vm.places.getDetails({
-        placeId: results[0].place_id
-      }, (place, sts) => { vm.handlePlacesResults(place, sts); });
     },
 
     /*
@@ -80,37 +130,13 @@ export default {
     },
 
     /*
-    * Handle File input
-    * Method checks for location points, address or place Id
-    */
-    createMarkersFromInput(input) {
-      const vm = this;
-      vm.allowMove = true;
-      input.forEach((location) => {
-        if (location.position && location.position.lat && location.position.lng) {
-          vm.geocoder.geocode({
-            location: location.position
-          }, (results, status) => vm.handleGeocodeResults(results, status));
-        } else if (location.address) {
-          vm.geocoder.geocode({
-            address: location.address
-          }, (results, status) => vm.handleGeocodeResults(results, status));
-        } else if (location.placeId) {
-          vm.places.getDetails({
-            placeId: location.placeId
-          }, (place, sts) => vm.handlePlacesResults(place, sts));
-        } else {
-          alert('Invalid Inout File');
-        }
-      });
-    },
-    /*
     * Method that will clear any current map markers from the markers array
     */
     clearDownMarkers() {
       this.$markers.map(marker => marker.setMap(null));
       this.$markers = [];
     },
+
     /*
     * Clear currently drawn lasso. Will also clear any captured markers.
     */
@@ -123,6 +149,9 @@ export default {
       }
     },
 
+    /*
+    * Check for any markers found within the lasso bounds
+    */
     checkMarkers() {
       const vm = this;
       if (vm.$markers.length > 0 && vm.rectangle) {
@@ -154,7 +183,7 @@ export default {
         /* Clear lasso if it exists */
         vm.clearLasso();
         /* Create array of markers from file input */
-        vm.createMarkersFromInput(results);
+        vm.handleInput(results);
       }
     }
 

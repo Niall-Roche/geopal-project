@@ -15,12 +15,15 @@ export default {
       this.createData(files[0]);
     },
     createData(file) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        this.$emit('onLoad', JSON.parse(e.target.result));
-      };
-      reader.readAsText(file);
+      if (file.type === this.$JSON_TYPE) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.$emit('onLoad', JSON.parse(e.target.result));
+        };
+        reader.readAsText(file);
+      } else {
+        alert('Incorrect File Type');
+      }
     }
   }
 };

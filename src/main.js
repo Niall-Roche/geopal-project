@@ -9,6 +9,7 @@ gmapsInit().then((result) => {
   Vue.prototype.$google = result;
   Vue.prototype.$map = null;
   Vue.prototype.$markers = [];
+  Vue.prototype.$JSON_TYPE = 'application/json';
   Vue.prototype.$markerColors = {
     red: {
       url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',

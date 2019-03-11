@@ -8,6 +8,8 @@ The user can then change the colour of the captured markers.
 
 https://geopal-project.herokuapp.com/
 
+See GeoJSON directory for some example input files
+
 
 ## Project setup
 ```
